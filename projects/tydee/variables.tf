@@ -14,3 +14,32 @@ variable "unique_suffix" {
   type        = string
   default     = "jhozua"
 }
+
+variable "smtp_host" {
+  description = "SMTP server hostname."
+  type        = string
+  default     = "smtp.gmail.com"
+}
+
+variable "smtp_port" {
+  description = "SMTP server port (587 = STARTTLS)."
+  type        = number
+  default     = 587
+}
+
+variable "smtp_username" {
+  description = "SMTP login — for Gmail, the full gmail address. Supplied via terraform.tfvars."
+  type        = string
+  sensitive   = true
+}
+
+variable "smtp_password" {
+  description = "SMTP password — for Gmail, a 16-character app password (not the account password). Supplied via terraform.tfvars."
+  type        = string
+  sensitive   = true
+}
+
+variable "smtp_from_email" {
+  description = "Sender address for outgoing mail — for Gmail, must match the account address."
+  type        = string
+}

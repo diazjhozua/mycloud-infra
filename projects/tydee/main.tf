@@ -89,8 +89,19 @@ resource "azurerm_service_plan" "this" {
   tags                = local.tags
 }
 
+resource "random_password" "jwt_secret" {
+  length  = 64
+  special = false # plain alphanumeric — the key is read as raw UTF-8 bytes
+}
+
+locals {
+  api_name     = "app-${local.name}-api-${var.unique_suffix}" # globally unique DNS name
+  api_url      = "https://${local.api_name}.azurewebsites.net"
+  frontend_url = "https://${azurerm_static_web_app.client.default_host_name}"
+}
+
 resource "azurerm_linux_web_app" "api" {
-  name                = "app-${local.name}-api-${var.unique_suffix}" # globally unique DNS name
+  name                = local.api_name
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
   service_plan_id     = azurerm_service_plan.this.id
@@ -108,6 +119,21 @@ resource "azurerm_linux_web_app" "api" {
   app_settings = {
     # Double underscore maps to the ":" hierarchy in .NET configuration
     "ConnectionStrings__Database" = "Server=tcp:${azurerm_mssql_server.this.fully_qualified_domain_name},1433;Initial Catalog=${azapi_resource.db.name};User ID=${azurerm_mssql_server.this.administrator_login};Password=${random_password.sql_admin.result};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
+    "Jwt__Secret"   = random_password.jwt_secret.result
+    "Jwt__Issuer"   = local.api_url
+    "Jwt__Audience" = local.frontend_url
+
+    "Cors__AllowedOrigins__0" = local.frontend_url # array entries use the index
+
+    "Smtp__Host"         = var.smtp_host
+    "Smtp__Port"         = tostring(var.smtp_port)
+    "Smtp__Username"     = var.smtp_username
+    "Smtp__Password"     = var.smtp_password
+    "Smtp__FromEmail"    = var.smtp_from_email
+    "Smtp__AppName"      = "Tydee"
+    "Smtp__FrontendUrl"  = local.frontend_url
+    "Smtp__IsProduction" = "true"
   }
 
   tags = local.tags

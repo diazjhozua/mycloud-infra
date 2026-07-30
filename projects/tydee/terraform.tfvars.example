@@ -1,6 +1,13 @@
 # Copy to terraform.tfvars (gitignored) and fill in real values.
 subscription_id = "00000000-0000-0000-0000-000000000000"
 
+# SMTP (Gmail: create an app password at https://myaccount.google.com/apppasswords)
+smtp_username   = "you@gmail.com"
+smtp_password   = "xxxx xxxx xxxx xxxx"
+smtp_from_email = "you@gmail.com"
+
 # Optional overrides:
 # location      = "southeastasia"
 # unique_suffix = "yourname"
+# smtp_host     = "smtp.gmail.com"
+# smtp_port     = 587
