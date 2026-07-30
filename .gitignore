@@ -1,0 +1,19 @@
+# Terraform state — contains ALL resource attributes in plaintext (passwords included).
+# Ours lives remotely in Azure Storage, but local copies can appear during migration/errors.
+*.tfstate
+*.tfstate.*
+
+# Variable values — real tfvars may hold secrets; commit only the .example
+*.tfvars
+!*.tfvars.example
+
+# Provider binaries and module cache (re-created by `terraform init`)
+.terraform/
+
+# Crash logs and plan files (plan files can embed sensitive values)
+crash.log
+crash.*.log
+*.tfplan
+
+# NOTE: .terraform.lock.hcl is intentionally NOT ignored — commit it,
+# it pins exact provider versions like a package lock file.
