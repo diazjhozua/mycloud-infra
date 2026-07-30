@@ -147,5 +147,12 @@ resource "azurerm_static_web_app" "client" {
   location            = "eastasia" # SWA is only offered in a few regions; southeastasia isn't one
   sku_tier            = "Free"
   sku_size            = "Free"
-  tags                = local.tags
+
+  app_settings = {
+    # Server-side only (Next.js route handlers) — NEXT_PUBLIC_API_URL is not set
+    # here because build-time vars are stamped in by the CI build, not at runtime.
+    "API_URL" = local.api_url
+  }
+
+  tags = local.tags
 }
