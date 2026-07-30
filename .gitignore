@@ -14,6 +14,7 @@
 crash.log
 crash.*.log
 *.tfplan
+tfplan
 
 # NOTE: .terraform.lock.hcl is intentionally NOT ignored — commit it,
 # it pins exact provider versions like a package lock file.
