@@ -1,12 +1,14 @@
 # mycloud-infra
 
-Terraform for my personal Azure portfolio. Each project gets its own resource
-group, its own folder under `projects/`, and its own remote state file — so a
-mistake in one project can never touch another.
+Terraform for all my personal projects, across any cloud provider. Each
+project gets its own folder under `projects/` and its own remote state file —
+so a mistake in one project can never touch another. Projects currently target
+Azure, but the layout is provider-agnostic: a future project can land on AWS,
+GCP, or anywhere else with its own providers and resources.
 
-Everything targets Azure **free tiers**: Static Web Apps (Free), App Service
-(F1), and the Azure SQL Database free offer (serverless, auto-pauses when the
-monthly quota is used up). Target monthly cost: **$0**.
+Azure projects target **free tiers** wherever possible: Static Web Apps
+(Free), App Service (F1), and the Azure SQL Database free offer (serverless,
+auto-pauses when the monthly quota is used up). Target monthly cost: **$0**.
 
 ## Layout
 
@@ -27,8 +29,9 @@ use paid SKUs), and full isolation beats DRY for two environments. Today only
 
 ## Remote state
 
-State lives in an Azure Storage account (`stmycloudtfstate` /container
-`tfstate`), created manually once — Terraform can't store its state in a
+State for every project — regardless of which cloud it deploys to — lives in
+an Azure Storage account (`stmycloudtfstate` / container `tfstate`), created
+manually once — Terraform can't store its state in a
 storage account it hasn't created yet. Each project uses its own `key`
 (e.g. `tydee.tfstate`). Auth is Entra ID (`use_azuread_auth = true`), so no
 storage keys are needed.
