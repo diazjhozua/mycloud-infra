@@ -117,6 +117,10 @@ resource "azurerm_linux_web_app" "api" {
   }
 
   app_settings = {
+    # App Service fronts the app with a proxy; without this, RemoteIpAddress is
+    # the proxy's IP and per-client rate limiting collapses into one shared bucket.
+    "ASPNETCORE_FORWARDEDHEADERS_ENABLED" = "true"
+
     # Double underscore maps to the ":" hierarchy in .NET configuration
     "ConnectionStrings__Database" = "Server=tcp:${azurerm_mssql_server.this.fully_qualified_domain_name},1433;Initial Catalog=${azapi_resource.db.name};User ID=${azurerm_mssql_server.this.administrator_login};Password=${random_password.sql_admin.result};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
@@ -155,4 +159,10 @@ resource "azurerm_static_web_app" "client" {
   }
 
   tags = local.tags
+
+  lifecycle {
+    # The SWA deploy action stamps the source repo onto the resource on every
+    # deploy; without this, every plan tries to null them back out.
+    ignore_changes = [repository_url, repository_branch]
+  }
 }
